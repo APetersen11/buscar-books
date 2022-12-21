@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import {
   Jumbotron,
   Container,
@@ -15,10 +15,27 @@ import { REMOVE_BOOK } from "../utils/mutations";
 
 const SavedBooks = () => {
   const { loading, data } = useQuery(QUERY_ME);
-  const [removeBook, { error }] = useMutation(REMOVE_BOOK);
-
   const userData = data?.me || []
 
+
+  const [removeBook] = useMutation(REMOVE_BOOK,{
+    update(cache, { data:  {removeBook}  }) {
+
+      try {
+        // update me array's cache
+        const { me } = cache.readQuery({ query: GET_ME });
+        cache.writeQuery({
+          query: GET_ME,
+          data: { me: { ...me, savedBooks: removeBook.savedBooks } },
+        });
+      } catch (e) {
+        console.warn("First book saved by user!")
+      };
+    }
+    })
+    if (loading) {
+      return <div>Loading...</div>;
+    }
 
 
 
@@ -69,8 +86,8 @@ const SavedBooks = () => {
 
       // const updatedUser = await response.json();
       // setUserData(updatedUser);
-      const{data}= await removeBook({
-        variables: {bookId}
+      await removeBook({
+        variables: {bookId: bookId}
       })
 
 
@@ -84,11 +101,6 @@ const SavedBooks = () => {
       console.error(err);
     }
   };
-
-  // if data isn't here yet, say so
-  if (loading) {
-    return <h2>LOADING...</h2>;
-  }
 
   return (
     <>
