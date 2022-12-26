@@ -1,7 +1,7 @@
 {
   "name": "googlebooks-app",
   "version": "1.0.0",
-  "homepage": "http://alyssapetersen11.github.io/buscar-books",
+  "homepage": "http://apetersen11.github.io/buscar-books",
   "description": "",
   "main": "server/server.js",
   "scripts": {
